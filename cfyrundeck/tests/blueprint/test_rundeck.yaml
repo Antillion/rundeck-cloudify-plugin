@@ -6,22 +6,35 @@ imports:
   - http://www.getcloudify.org/spec/cloudify/3.2.1/types.yaml
   - test_plugin.yaml
 
-node_templates:
-  simple_host:
-    type: cloudify.nodes.Root
+node_types:
+  # Example method of defining a type that will define some sort of common
+  # value. The defaults below could come from an input value or from another
+  # node (via getProperty).
+  antillion.cfyrundeck.SimpleNode:
+    derived_from: cloudify.nodes.Root
     interfaces:
       cloudify.interfaces.lifecycle:
         create:
           implementation: antillion.cfyrundeck.jobs.execute
           inputs:
+            rundeck_server:
+              default: 'rundeck.example.com'
+            api_token:
+              default: 'SOME_API_TOKEN'
+
+node_templates:
+  simple_host:
+    type: antillion.cfyrundeck.SimpleNode
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          inputs:
+            ## Overrides
+            # Uncommenting the following would override the default defined in SimpleNode
+            #rundeck_server: some.other.rundeck.com
+            #api_token: 'SOME_OTHER_TOKEN'
             job_id: 'ASDF-ASDFASDFD-ASDFASDF-ASDFASDF'
-            rundeck_server: 'rundeck.example.com'
-            api_token: 'SOME_API_TOKEN'
             poll_in_s: 1
-            # loglevel: 'DEBUG'
-            # asUser: 'SomeUser'
-            # filters:
-            #   hostname: 'Somehostname'
             args:
               stringArg: 'stringVal1, stringVal2'
               numArg: 2
@@ -29,3 +42,8 @@ node_templates:
                 - 3
                 - 4
                 - 5
+            ## Not yet implemented
+            # loglevel: 'DEBUG'
+            # asUser: 'SomeUser'
+            # filters:
+            #   hostname: 'Somehostname'

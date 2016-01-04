@@ -1,0 +1,26 @@
+box: python:2.7-onbuild
+build:
+  steps:
+    - script:
+        name: Install required libs
+        code: |
+            pip install tox
+            pip install codecov
+    - script:
+        name: Run Tox
+        code: |
+            tox
+    - script:
+        name: Upload codecov results
+        code: codecov --token=$CODECOV
+deploy:
+  steps:
+    - script:
+        name: Tar & gzip output directory
+        code: |
+            tar -pczf $WERCKER_OUTPUT_DIR/plugin.tar.gz *
+    - otupman/s3put@0.0.4:
+        key-id: $S3_ID
+        key-secret: $S3_KEY
+        file: $WERCKER_OUTPUT_DIR/plugin.tar.gz
+        url: s3://antillion/stove-cfy-plugin/stove-cfy-plugin_${WERCKER_GIT_COMMIT:0:7}.tar.gz

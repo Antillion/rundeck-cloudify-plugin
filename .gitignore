@@ -1,0 +1,9 @@
+.tox
+.Python
+.coverage
+cloudify_rundeck_plugin.egg-info
+include
+lib
+
+bin
+*.pyc

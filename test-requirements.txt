@@ -1,0 +1,5 @@
+testtools
+mock
+httmock
+HTTPretty
+sure

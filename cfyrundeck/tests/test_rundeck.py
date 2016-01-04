@@ -56,6 +56,13 @@ class TestRundeckPlugin(unittest.TestCase):
             instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
 
             self.env.execute('install', task_retries=0)
+            RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
+            
+            instance.run_job.assert_called_once_with('ASDF-ASDFASDFD-ASDFASDF-ASDFASDF',
+                                                     argString={'stringArg': 'stringVal1, stringVal2',
+                                                                'arrayArg': [3,4,5],
+                                                                'numArg': 2})
+
 
     def test_execution_failure(self):
         with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:

@@ -17,7 +17,7 @@
 from cloudify import ctx
 
 # put the operation decorator on any function that is a task
-from cloudify.decorators import operation
+from cloudify.decorators import operation, workflow
 from cloudify.exceptions import NonRecoverableError
 
 from rundeck.client import Rundeck
@@ -44,3 +44,7 @@ def execute(**kwards):
     ctx.logger.info("Rundeck[{0}]:Execution[{1}] {2} ".format(job_id, execution_id, status))
     if status != 'succeeded':
         raise NonRecoverableError("Execution [{0}] did not succeed, result was: {1}".format(execution_id, status))
+
+@operation
+def import_job(file_url, project, format, preserve_uuid, **kwargs):
+  ctx.logger.info('Importing job from {0} to {1}'.format(file_url, project))

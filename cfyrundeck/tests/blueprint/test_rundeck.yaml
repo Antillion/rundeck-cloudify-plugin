@@ -47,3 +47,31 @@ node_templates:
             # asUser: 'SomeUser'
             # filters:
             #   hostname: 'Somehostname'
+
+workflows:
+  import_job:
+    mapping: antillion.cfyrundeck.jobs.import_job
+    parameters:
+      file_url:
+        description: URL to the job
+      project:
+        description: The name of the project to import into
+      format:
+        description: yaml / xml
+      preserve_uuid:
+        description: Whether to preserve the UUID of the job or create a new one
+        default: true
+
+  import_project:
+    mapping: antillion.cfyrundeck.projects.import_archive
+    parameters:
+      archive_url:
+        description: URL to the project archive
+      preserve_uuid:
+        default: true
+      import_executions:
+        default: false
+      import_config:
+        default: false
+      import_acls:
+        default: false

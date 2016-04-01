@@ -50,6 +50,32 @@ def mocked_rundeck():
   return 1
 
 class TestRundeckPlugin(unittest.TestCase):
+
+  def test_import_archive(self):
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+      instance = RundeckMock.return_value
+      instance.run_job.return_value = {'id': '0987'}
+      instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+
+      self.env.execute('import_project', parameters={'archive_url': 'archive_url'})
+
+
+  def test_import(self):
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+      instance = RundeckMock.return_value
+      instance.run_job.return_value = {'id': '0987'}
+      instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+
+      self.env.execute('import_job', parameters={'file_url': 'file_url', 'project': 'project', 'format': 'yaml'})
+
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+      instance = RundeckMock.return_value
+      execution_id = '0987'
+      instance.run_job.return_value = {'id': execution_id}
+      instance.execution.side_effect = []
+      self.env.execute('install', task_retries=0)
+      self.env.execute('import_job', parameters={'file_url': '', 'project': 'project', 'format': 'yaml'})
+
   def test_simple_call(self):
     with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
       instance = RundeckMock.return_value

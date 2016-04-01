@@ -28,6 +28,7 @@ from cloudify.exceptions import NonRecoverableError
 sys.path.append(os.getcwd() + '/plugin')
 
 import cfyrundeck.jobs as jobs
+import cfyrundeck.projects as projects
 from rundeck.client import Rundeck
 
 #
@@ -36,51 +37,51 @@ from rundeck.client import Rundeck
 _import_module = importlib.import_module
 
 def mocked_import(arg):
-    """Intercepts imports and returns our own copy of plugin.tasks (if requested)"""
-    if arg == 'cfyrundeck.jobs':
-        return tasks
-    elif arg == 'rundeck.client':
-        return Rundeck
-    else:
-        print 'Allowing import: {0}'.format(arg)
-        return _import_module(arg)
+  """Intercepts imports and returns our own copy of plugin.tasks (if requested)"""
+  if arg == 'cfyrundeck.jobs':
+    return tasks
+  elif arg == 'rundeck.client':
+    return Rundeck
+  else:
+    print 'Allowing import: {0}'.format(arg)
+    return _import_module(arg)
 
 def mocked_rundeck():
-    return 1
+  return 1
 
 class TestRundeckPlugin(unittest.TestCase):
-    def test_simple_call(self):
-        with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
-            instance = RundeckMock.return_value
-            instance.run_job.return_value = {'id': '0987'}
-            instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+  def test_simple_call(self):
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+      instance = RundeckMock.return_value
+      instance.run_job.return_value = {'id': '0987'}
+      instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
 
-            self.env.execute('install', task_retries=0)
-            RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
-            
-            instance.run_job.assert_called_once_with('ASDF-ASDFASDFD-ASDFASDF-ASDFASDF',
-                                                     argString={'stringArg': 'stringVal1, stringVal2',
-                                                                'arrayArg': [3,4,5],
-                                                                'numArg': 2})
+      self.env.execute('install', task_retries=0)
+      RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
+
+      instance.run_job.assert_called_once_with('ASDF-ASDFASDFD-ASDFASDF-ASDFASDF',
+                                               argString={'stringArg': 'stringVal1, stringVal2',
+                                                          'arrayArg': [3,4,5],
+                                                          'numArg': 2})
 
 
-    def test_execution_failure(self):
-        with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
-            instance = RundeckMock.return_value
-            execution_id = '0987'
-            instance.run_job.return_value = {'id': execution_id}
-            result = 'failed'
-            instance.execution.side_effect = [{'status':'running'}, {'status':result}]
-            expected_exception_msg = "Workflow failed: Task failed 'cfyrundeck.jobs.execute' -> Execution [{0}] did not succeed, result was: {1}".format(execution_id, result)
-            with self.assertRaises(RuntimeError) as cm:
-                self.env.execute('install', task_retries=0)
+  def test_execution_failure(self):
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+      instance = RundeckMock.return_value
+      execution_id = '0987'
+      instance.run_job.return_value = {'id': execution_id}
+      result = 'failed'
+      instance.execution.side_effect = [{'status':'running'}, {'status':result}]
+      expected_exception_msg = "Workflow failed: Task failed 'cfyrundeck.jobs.execute' -> Execution [{0}] did not succeed, result was: {1}".format(execution_id, result)
+      with self.assertRaises(RuntimeError) as cm:
+        self.env.execute('install', task_retries=0)
 
-            self.assertEquals(expected_exception_msg, str(cm.exception))
+      self.assertEquals(expected_exception_msg, str(cm.exception))
 
-    def setUp(self):
-        blueprint_path = os.path.join(os.path.dirname(__file__),
-                                      'blueprint', 'test_rundeck.yaml')
-        inputs = {}
-        self.env = local.init_env(blueprint_path,
-                                  name=self._testMethodName,
-                                  inputs=inputs)
+  def setUp(self):
+    blueprint_path = os.path.join(os.path.dirname(__file__),
+                                  'blueprint', 'test_rundeck.yaml')
+    inputs = {}
+    self.env = local.init_env(blueprint_path,
+                              name=self._testMethodName,
+                              inputs=inputs)

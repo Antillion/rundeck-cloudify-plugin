@@ -22,6 +22,7 @@ from cloudify.exceptions import NonRecoverableError
 
 from rundeck.client import Rundeck
 import time
+from requests import get, codes
 
 @operation
 def execute(**kwards):
@@ -32,7 +33,6 @@ def execute(**kwards):
 
     execution_id = run_result['id']
     ctx.logger.info("Rundeck[{0}]:Execution[{1}] Started...".format(job_id, execution_id))
-
 
     poll_in_s = kwards['poll_in_s'] if kwards.has_key('poll_in_s') else 10
     status = 'running'
@@ -48,3 +48,11 @@ def execute(**kwards):
 @operation
 def import_job(file_url, project, format, preserve_uuid, **kwargs):
   ctx.logger.info('Importing job from {0} to {1}'.format(file_url, project))
+
+  result = get(file_url)
+  if result.status_code != codes.ok:
+    raise NonRecoverableError('Import failed, status code: {0}, full data: {1}'.format(result.status_code, result))
+
+  rundeck = Rundeck(kwargs['rundeck']['hostname'], api_token=kwargs['rundeck']['api_token'])
+  import_result = rundeck.import_job(result.text, {'format': format, 'project': project})
+  return import_result

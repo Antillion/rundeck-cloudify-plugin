@@ -19,13 +19,13 @@ import os
 import unittest
 import importlib
 
-from mock import Mock, MagicMock
+from mock import Mock, MagicMock, PropertyMock
 from mock import patch
 
 from cloudify.workflows import local
 from cloudify.exceptions import NonRecoverableError
 
-sys.path.append(os.getcwd() + '/plugin')
+sys.path.append(os.getcwd() + '/cfyrundeck')
 
 import cfyrundeck.jobs as jobs
 import cfyrundeck.projects as projects
@@ -49,32 +49,77 @@ def mocked_import(arg):
 def mocked_rundeck():
   return 1
 
+def get_blueprint_path():
+  return os.getcwd() + '/cfyrundeck/tests/blueprint'
+
+
 class TestRundeckPlugin(unittest.TestCase):
 
-  def test_import_archive(self):
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+  # def test_import_archive(self):
+  #   with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+  #     instance = RundeckMock.return_value
+  #     instance.run_job.return_value = {'id': '0987'}
+  #     instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+  #
+  #     self.env.execute('import_project', parameters={'archive_url': 'archive_url'})
+
+  def setup_get_mock(self, GetMock, response_status, response_data):
+    GetMock.return_value = MagicMock()
+    GetMock.return_value.__str__.return_value = response_data
+    type(GetMock.return_value).status_code = PropertyMock(return_value=response_status)
+    type(GetMock.return_value).text = PropertyMock(return_value=response_data)
+
+  def build_import_params(self, job_filename):
+    file_url = 'http://localhost:54321/blueprint/{0}'.format(job_filename)
+    return {
+      'file_url': file_url,
+      'project': 'project', 'format': 'xml',
+      'rundeck': {'hostname': 'rundeck.example.com', 'api_token': 'SOME_API_TOKEN'}
+    }
+
+
+  def test_import_with_missing_file(self):
+    job_filename = 'import_job_simple.xml'
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
+      job_data = blueprint_file.read()
       instance = RundeckMock.return_value
-      instance.run_job.return_value = {'id': '0987'}
-      instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+      instance.jobs_import.return_value = {}
 
-      self.env.execute('import_project', parameters={'archive_url': 'archive_url'})
+      self.setup_get_mock(GetMock, 400, '')
 
+      import_params = self.build_import_params(job_filename)
+
+      with self.assertRaises(NonRecoverableError) as cm:
+        self.env.execute('import_job', parameters=import_params)
+
+      GetMock.assert_called_once_with(import_params['file_url'])
+      instance.import_job.assert_not_called()
 
   def test_import(self):
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+    job_filename = 'import_job_simple.xml'
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
+      job_data = blueprint_file.read()
       instance = RundeckMock.return_value
-      instance.run_job.return_value = {'id': '0987'}
-      instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+      instance.jobs_import.return_value = {}
 
-      self.env.execute('import_job', parameters={'file_url': 'file_url', 'project': 'project', 'format': 'yaml'})
+      self.setup_get_mock(GetMock, 200, job_data)
 
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
-      instance = RundeckMock.return_value
-      execution_id = '0987'
-      instance.run_job.return_value = {'id': execution_id}
-      instance.execution.side_effect = []
-      self.env.execute('install', task_retries=0)
-      self.env.execute('import_job', parameters={'file_url': '', 'project': 'project', 'format': 'yaml'})
+      import_params = self.build_import_params(job_filename)
+
+      self.env.execute('import_job', parameters=import_params)
+
+      RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
+      GetMock.assert_called_once_with(import_params['file_url'])
+      instance.import_job.assert_called_once_with(job_data, { 'project': 'project', 'format': 'xml'})
+
+
+    # with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+    #   instance = RundeckMock.return_value
+    #   execution_id = '0987'
+    #   instance.run_job.return_value = {'id': execution_id}
+    #   instance.execution.side_effect = []
+    #   self.env.execute('install', task_retries=0)
+    #   self.env.execute('import_job', parameters={'file_url': '', 'project': 'project', 'format': 'yaml'})
 
   def test_simple_call(self):
     with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:

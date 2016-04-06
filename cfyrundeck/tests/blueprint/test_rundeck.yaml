@@ -61,10 +61,15 @@ workflows:
       preserve_uuid:
         description: Whether to preserve the UUID of the job or create a new one
         default: true
+      rundeck:
+        default: {}
+        description: dictionary with hostname and api_token
 
   import_project:
     mapping: antillion.cfyrundeck.projects.import_archive
     parameters:
+      project:
+        description: The name of the project that will have the archive imported into
       archive_url:
         description: URL to the project archive
       preserve_uuid:
@@ -75,3 +80,6 @@ workflows:
         default: false
       import_acls:
         default: false
+      rundeck:
+        default: {}
+        description: dictionary with hostname and api_token

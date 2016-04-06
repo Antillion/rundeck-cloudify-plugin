@@ -1,3 +1,4 @@
 cloudify-plugins-common==3.2.1
 cloudify-dsl-parser==3.2.1
-rundeckrun==0.2.1
+git+git://github.com/anillion/rundeckrun.git@master
+requests==1.2.3

@@ -38,7 +38,10 @@ setup(
         # Necessary dependency for developing plugins, do not remove!
         "cloudify-plugins-common==3.2.1",
         "cloudify-dsl-parser==3.2.1",
-        "rundeckrun==0.2.1"
+        "rundeckrun==0.2.3"
+    ],
+    dependency_links=[
+        "http://github.com/antillion/rundeckrun/tarball/master#egg=rundeckrun-0.2.3"
     ],
     test_requires=[
         "cloudify-dsl-parser==3.2.1"

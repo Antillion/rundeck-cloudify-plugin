@@ -11,3 +11,14 @@ plugins:
     # the plugin if it is included in the the blueprint directory under the
     # "plugins" directory.
     source: cloudify-rundeck-plugin
+
+node_types:
+  antillion.rundeck.config:
+    derived_from: cloudify.nodes.Root
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          implementation: antillion.cfyrundeck.jobs.execute
+    # properties:
+    #   hostname:   { type: string }
+    #   api_token:  { type: string }

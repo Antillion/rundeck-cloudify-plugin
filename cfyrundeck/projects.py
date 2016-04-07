@@ -27,9 +27,14 @@ from requests import get, codes
 @operation
 def import_archive(project, archive_url, preserve_uuid, import_executions, import_config, import_acls, **kwargs):
   rundeck_config = kwargs['rundeck']
-  ctx.logger.info('[{1}] - Importing project archive from {0}'.format(archive_url, project))
 
+  ctx.logger.info('[{1}] - Importing project archive from {0}'.format(archive_url, project))
+  ctx.logger.debug('[{0}] Rundeck config: {1}'.format(project, rundeck_config))
+
+  ctx.logger.debug('[{0}] Retrieving project archive from {1}'.format(project, archive_url))
   result = get(archive_url)
+  ctx.logger.debug('[{0}] Archive retrieved'.format(project))
+
   if result.status_code != codes.ok:
     raise NonRecoverableError('Import failed, status code: {0}, full data: {1}'.format(result.status_code, result))
 
@@ -37,3 +42,9 @@ def import_archive(project, archive_url, preserve_uuid, import_executions, impor
                     api_token=rundeck_config['api_token'],
                     protocol=rundeck_config['protocol'] if rundeck_config.has_key('protocol') else 'http',
                     port=kwargsrundeck_config['port'] if rundeck_config.has_key('port') else '4440')
+
+  ctx.logger.info('[{0}] Starting import of archive'.format(project))
+  if not rundeck.import_project_archive(project, result.content):
+    raise NonRecoverableError('Import failed. No details why, sorry.'.format(result.status_code, result))
+
+  ctx.logger.info('[{0}] Project archive successfully imported'.format(project))

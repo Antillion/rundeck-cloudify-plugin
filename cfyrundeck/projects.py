@@ -41,11 +41,11 @@ def import_archive(project, archive_url, preserve_uuid, import_executions, impor
   rundeck = Rundeck(rundeck_config['hostname'],
                     api_token=rundeck_config['api_token'],
                     protocol=rundeck_config['protocol'] if rundeck_config.has_key('protocol') else 'http',
-                    port=kwargsrundeck_config['port'] if rundeck_config.has_key('port') else '4440')
+                    port=rundeck_config['port'] if rundeck_config.has_key('port') else '4440')
 
   ctx.logger.info('[{0}] Starting import of archive'.format(project))
   import_result = rundeck.import_project_archive(project, result.content)
-  
+
   if not import_result['succeeded']:
     raise NonRecoverableError('Import failed. No details why, sorry.'.format(result.status_code, result))
 

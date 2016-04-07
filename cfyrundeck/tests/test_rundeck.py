@@ -80,8 +80,8 @@ class TestRundeckPlugin(unittest.TestCase):
 
   def test_import_with_missing_file(self):
     job_filename = 'import_job_simple.xml'
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
-      job_data = blueprint_file.read()
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
+      job_data = '<some><job><data></data></job></some>'
       instance = RundeckMock.return_value
       instance.jobs_import.return_value = {}
 
@@ -97,8 +97,8 @@ class TestRundeckPlugin(unittest.TestCase):
 
   def test_import(self):
     job_filename = 'import_job_simple.xml'
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
-      job_data = blueprint_file.read()
+    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
+      job_data = '<some><job><data></data></job></some>'
       instance = RundeckMock.return_value
       instance.jobs_import.return_value = {}
 

@@ -41,7 +41,7 @@ setup(
         "rundeckrun==0.2.3"
     ],
     dependency_links=[
-        "http://github.com/antillion/rundeckrun/tarball/master#egg=rundeckrun-0.2.3"
+        "http://github.com/antillion/rundeckrun/tarball/0.2.3-ant#egg=rundeckrun-0.2.3"
     ],
     test_requires=[
         "cloudify-dsl-parser==3.2.1"

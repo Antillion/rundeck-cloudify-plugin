@@ -66,7 +66,7 @@ class TestRundeckPlugin(unittest.TestCase):
     with patch('cfyrundeck.projects.Rundeck') as RundeckMock, patch('cfyrundeck.projects.get') as GetMock:#, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
       instance = RundeckMock.return_value
       self.setup_get_mock(GetMock, 200, 'test')
-      instance.return_value.project_archive_import.return_value = {}
+      instance.return_value.project_archive_import.return_value = True
 
       workflow_parameters = {'project': 'stove', 'archive_url': 'http://archive_url',
                              'rundeck': {'hostname': 'rundeck.example.com', 'api_token': 'SOME_API_TOKEN'}}

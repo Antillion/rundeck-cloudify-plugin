@@ -1,5 +1,5 @@
 ########
-# Copyright (c) 2015 Antillion Ltd. All rights reserved
+# Copyright (c) 2016 Antillion Ltd. All rights reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -111,15 +111,6 @@ class TestRundeckPlugin(unittest.TestCase):
       RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
       GetMock.assert_called_once_with(import_params['file_url'])
       instance.import_job.assert_called_once_with(job_data, { 'project': 'project', 'format': 'xml'})
-
-
-    # with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
-    #   instance = RundeckMock.return_value
-    #   execution_id = '0987'
-    #   instance.run_job.return_value = {'id': execution_id}
-    #   instance.execution.side_effect = []
-    #   self.env.execute('install', task_retries=0)
-    #   self.env.execute('import_job', parameters={'file_url': '', 'project': 'project', 'format': 'yaml'})
 
   def test_simple_call(self):
     with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:

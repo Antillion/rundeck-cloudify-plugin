@@ -1,5 +1,5 @@
 ########
-# Copyright (c) 2014 GigaSpaces Technologies Ltd. All rights reserved
+# Copyright (c) 2016 Antillion Ltd. All rights reserved
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,25 +17,19 @@ del os.link
 
 from setuptools import setup
 
-# Replace the place holders with values for your project
-
 setup(
-
-    # Do not use underscores in the plugin name.
     name='cloudify-rundeck-plugin',
 
     version='0.1.1',
     author='Oliver Tupman',
-    author_email='oliver@dts-workshop.com',
+    author_email='otupman@antillion.com',
     description='Rundeck Plugin for Cloudify',
 
-    # This must correspond to the actual packages in the plugin.
     packages=['cfyrundeck'],
 
     license='LICENSE',
     zip_safe=False,
     install_requires=[
-        # Necessary dependency for developing plugins, do not remove!
         "cloudify-plugins-common==3.2.1",
         "cloudify-dsl-parser==3.2.1",
         "rundeckrun==0.2.3"

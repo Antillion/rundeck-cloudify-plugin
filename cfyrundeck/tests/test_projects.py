@@ -63,7 +63,7 @@ class TestRundeckPlugin(unittest.TestCase):
     type(GetMock.return_value).content = PropertyMock(return_value=response_data)
 
   def test_import_archive(self):
-    with patch('cfyrundeck.projects.Rundeck') as RundeckMock, patch('cfyrundeck.projects.get') as GetMock:#, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
+    with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.projects.get') as GetMock:#, open('{0}/{1}'.format(get_blueprint_path(), job_filename), 'r') as blueprint_file:
       instance = RundeckMock.return_value
       self.setup_get_mock(GetMock, 200, 'test')
       instance.return_value.import_project_archive.return_value = True
@@ -74,7 +74,7 @@ class TestRundeckPlugin(unittest.TestCase):
 
       RundeckMock.assert_called_once_with('rundeck.example.com',
                                           api_token='SOME_API_TOKEN',
-                                          port='4440', protocol='http')
+                                          port=4440, protocol='http')
       GetMock.assert_called_once_with(workflow_parameters['archive_url'])
       instance.import_project_archive.assert_called_once_with(
         workflow_parameters['project'], 'test'

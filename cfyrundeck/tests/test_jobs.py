@@ -54,15 +54,6 @@ def get_blueprint_path():
 
 
 class TestRundeckPlugin(unittest.TestCase):
-
-  # def test_import_archive(self):
-  #   with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
-  #     instance = RundeckMock.return_value
-  #     instance.run_job.return_value = {'id': '0987'}
-  #     instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
-  #
-  #     self.env.execute('import_project', parameters={'archive_url': 'archive_url'})
-
   def setup_get_mock(self, GetMock, response_status, response_data):
     GetMock.return_value = MagicMock()
     GetMock.return_value.__str__.return_value = response_data
@@ -77,10 +68,9 @@ class TestRundeckPlugin(unittest.TestCase):
       'rundeck': {'hostname': 'rundeck.example.com', 'api_token': 'SOME_API_TOKEN'}
     }
 
-
   def test_import_with_missing_file(self):
     job_filename = 'import_job_simple.xml'
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
+    with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
       job_data = '<some><job><data></data></job></some>'
       instance = RundeckMock.return_value
       instance.jobs_import.return_value = {}
@@ -97,7 +87,7 @@ class TestRundeckPlugin(unittest.TestCase):
 
   def test_import(self):
     job_filename = 'import_job_simple.xml'
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
+    with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
       job_data = '<some><job><data></data></job></some>'
       instance = RundeckMock.return_value
       instance.jobs_import.return_value = {}
@@ -108,18 +98,24 @@ class TestRundeckPlugin(unittest.TestCase):
 
       self.env.execute('import_job', parameters=import_params)
 
-      RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
+      RundeckMock.assert_called_once_with('rundeck.example.com',
+                                          api_token='SOME_API_TOKEN',
+                                          port=4440,
+                                          protocol='http')
       GetMock.assert_called_once_with(import_params['file_url'])
       instance.import_job.assert_called_once_with(job_data, { 'project': 'project', 'format': 'xml'})
 
   def test_simple_call(self):
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+    with patch('cfyrundeck.utils.Rundeck') as RundeckMock:
       instance = RundeckMock.return_value
       instance.run_job.return_value = {'id': '0987'}
       instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
 
       self.env.execute('install', task_retries=0)
-      RundeckMock.assert_called_once_with('rundeck.example.com', api_token='SOME_API_TOKEN')
+      RundeckMock.assert_called_once_with('rundeck.example.com',
+                                          api_token='SOME_API_TOKEN',
+                                          protocol='http',
+                                          port=24440)
 
       instance.run_job.assert_called_once_with('ASDF-ASDFASDFD-ASDFASDF-ASDFASDF',
                                                argString={'stringArg': 'stringVal1, stringVal2',
@@ -128,7 +124,7 @@ class TestRundeckPlugin(unittest.TestCase):
 
 
   def test_execution_failure(self):
-    with patch('cfyrundeck.jobs.Rundeck') as RundeckMock:
+    with patch('cfyrundeck.utils.Rundeck') as RundeckMock:
       instance = RundeckMock.return_value
       execution_id = '0987'
       instance.run_job.return_value = {'id': execution_id}

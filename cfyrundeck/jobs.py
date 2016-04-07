@@ -20,25 +20,28 @@ from cloudify import ctx
 from cloudify.decorators import operation, workflow
 from cloudify.exceptions import NonRecoverableError
 
-from rundeck.client import Rundeck
+import utils
 import time
 from requests import get, codes
 
 @operation
-def execute(**kwards):
-    rundeck = Rundeck(kwards['rundeck_server'], api_token=kwards['api_token'])
-    job_id = kwards['job_id']
+def execute(**kwargs):
+    rundeck = utils.create_rundeck_client(kwargs)
+    job_id = kwargs['job_id']
+    poll_in_s = kwargs['poll_in_s'] if kwargs.has_key('poll_in_s') else 10
+
     ctx.logger.info("Rundeck[{0}]: Starting`...".format(job_id))
-    run_result = rundeck.run_job(job_id, argString=kwards['args'])
+    run_result = rundeck.run_job(job_id, argString=kwargs['args'])
 
     execution_id = run_result['id']
     ctx.logger.info("Rundeck[{0}]:Execution[{1}] Started...".format(job_id, execution_id))
 
-    poll_in_s = kwards['poll_in_s'] if kwards.has_key('poll_in_s') else 10
     status = 'running'
     while status == 'running':
         time.sleep(poll_in_s)
         execution_status = rundeck.execution(execution_id)
+        ctx.logger.info("Rundeck[{0}]:Execution[{1}] Checked execution, status is: {2}".
+                        format(job_id, execution_id, execution_status['status']))
         status = execution_status['status']
 
     ctx.logger.info("Rundeck[{0}]:Execution[{1}] {2} ".format(job_id, execution_id, status))
@@ -53,6 +56,6 @@ def import_job(file_url, project, format, preserve_uuid, **kwargs):
   if result.status_code != codes.ok:
     raise NonRecoverableError('Import failed, status code: {0}, full data: {1}'.format(result.status_code, result))
 
-  rundeck = Rundeck(kwargs['rundeck']['hostname'], api_token=kwargs['rundeck']['api_token'])
+  rundeck = utils.create_rundeck_client(kwargs['rundeck'])
   import_result = rundeck.import_job(result.text, {'format': format, 'project': project})
   return import_result

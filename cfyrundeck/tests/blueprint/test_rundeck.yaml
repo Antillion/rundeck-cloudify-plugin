@@ -17,10 +17,15 @@ node_types:
         create:
           implementation: antillion.cfyrundeck.jobs.execute
           inputs:
-            rundeck_server:
+            hostname:
               default: 'rundeck.example.com'
             api_token:
               default: 'SOME_API_TOKEN'
+            port:
+              default: 24440
+            protocol:
+              default: http
+
 
 node_templates:
   simple_host:

@@ -25,6 +25,11 @@ node_types:
               default: 24440
             protocol:
               default: http
+            job_id:
+              type: string
+            args:
+              default: {}
+              description: ''
 
 
 node_templates:

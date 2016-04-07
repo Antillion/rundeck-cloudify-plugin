@@ -32,5 +32,8 @@ def import_archive(project, archive_url, preserve_uuid, import_executions, impor
   if result.status_code != codes.ok:
     raise NonRecoverableError('Import failed, status code: {0}, full data: {1}'.format(result.status_code, result))
 
-  rundeck = Rundeck(kwargs['rundeck']['hostname'], api_token=kwargs['rundeck']['api_token'])
+  rundeck = Rundeck(kwargs['rundeck']['hostname'],
+                    api_token=kwargs['rundeck']['api_token'],
+                    protocol=kwargs['rundeck']['protocol'] if kwargs.has_key('protocol') else 'http',
+                    port=kwargs['rundeck']['port'] if kwargs.has_key('port') else '4440')
   rundeck.import_project_archive(project, result.content)

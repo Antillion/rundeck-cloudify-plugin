@@ -20,7 +20,7 @@ from setuptools import setup
 setup(
     name='cloudify-rundeck-plugin',
 
-    version='0.1.1',
+    version='0.1.2',
     author='Oliver Tupman',
     author_email='otupman@antillion.com',
     description='Rundeck Plugin for Cloudify',

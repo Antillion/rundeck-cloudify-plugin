@@ -11,3 +11,39 @@ node_types:
       cloudify.interfaces.lifecycle:
         create:
           implementation: antillion.cfyrundeck.jobs.execute
+
+workflows:
+  antillion.rundeck.import_job:
+    mapping: antillion.cfyrundeck.jobs.import_job
+    parameters:
+      file_url:
+        description: URL to the job
+      project:
+        description: The name of the project to import into
+      format:
+        description: yaml / xml
+      preserve_uuid:
+        description: Whether to preserve the UUID of the job or create a new one
+        default: true
+      rundeck:
+        default: {}
+        description: dictionary with hostname and api_token
+
+  antillion.rundeck.import_project:
+    mapping: antillion.cfyrundeck.projects.import_archive
+    parameters:
+      project:
+        description: The name of the project that will have the archive imported into
+      archive_url:
+        description: URL to the project archive
+      preserve_uuid:
+        default: true
+      import_executions:
+        default: false
+      import_config:
+        default: false
+      import_acls:
+        default: false
+      rundeck:
+        default: {}
+        description: dictionary with hostname and api_token

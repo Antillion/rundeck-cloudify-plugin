@@ -8,7 +8,7 @@ node_types:
   antillion.rundeck.config:
     derived_from: cloudify.nodes.Root
     interfaces:
-      cloudify.interfaces.lifecycle:
+      fake.lifecycle:
         create:
           implementation: antillion.cfyrundeck.jobs.execute
 

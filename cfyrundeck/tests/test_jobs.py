@@ -80,7 +80,7 @@ class TestRundeckPlugin(unittest.TestCase):
       import_params = self.build_import_params(job_filename)
 
       with self.assertRaises(NonRecoverableError) as cm:
-        self.env.execute('import_job', parameters=import_params)
+        self.env.execute('antillion.rundeck.import_job', parameters=import_params)
 
       GetMock.assert_called_once_with(import_params['file_url'])
       instance.import_job.assert_not_called()
@@ -96,7 +96,7 @@ class TestRundeckPlugin(unittest.TestCase):
 
       import_params = self.build_import_params(job_filename)
 
-      self.env.execute('import_job', parameters=import_params)
+      self.env.execute('antillion.rundeck.import_job', parameters=import_params)
 
       RundeckMock.assert_called_once_with('rundeck.example.com',
                                           api_token='SOME_API_TOKEN',

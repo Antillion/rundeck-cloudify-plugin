@@ -70,7 +70,7 @@ class TestRundeckPlugin(unittest.TestCase):
 
       workflow_parameters = {'project': 'stove', 'archive_url': 'http://archive_url',
                              'rundeck': {'hostname': 'rundeck.example.com', 'api_token': 'SOME_API_TOKEN'}}
-      self.env.execute('import_project', parameters=workflow_parameters)
+      self.env.execute('antillion.rundeck.import_project_archive', parameters=workflow_parameters)
 
       RundeckMock.assert_called_once_with('rundeck.example.com',
                                           api_token='SOME_API_TOKEN',

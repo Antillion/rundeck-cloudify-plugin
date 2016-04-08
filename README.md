@@ -133,14 +133,14 @@ Imports an entire Rundeck project archive into an existing project.
  - `rundeck`: required, the Rundeck configuration data
 
 
-## antillion.rundeck.import_project (workflow)
+## antillion.rundeck.import_project_archive (workflow)
 
 
 See above operation for parameters details.
 
  ### Example
 
-     cfy local execute -w antillion.rundeck.import_job \
+     cfy local execute -w antillion.rundeck.import_project_archive \
                        -p '{"archive_url": "http://some.host/my_project.jar", \
                             "project": "my_project", \
                             "rundeck": {"hostname": "my.rundeck", \

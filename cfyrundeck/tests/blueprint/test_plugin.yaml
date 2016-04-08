@@ -20,7 +20,7 @@ workflows:
         default: {}
         description: dictionary with hostname and api_token
 
-  antillion.rundeck.import_project:
+  antillion.rundeck.import_project_archive:
     mapping: antillion.cfyrundeck.projects.import_archive
     parameters:
       project:

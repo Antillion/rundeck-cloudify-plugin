@@ -1,6 +1,10 @@
 # rundeck-cloudify-plugin
 
-Simple plugin that integrates with [Runceck](http://rundeck.org).
+[![codecov.io](https://codecov.io/github/Antillion/rundeck-cloudify-plugin/coverage.svg?branch=master)](https://codecov.io/github/Antillion/rundeck-cloudify-plugin?branch=master)
+
+[![wercker status](https://app.wercker.com/status/384e7713a3dcd6811bf0a296d975ca27/m "wercker status")](https://app.wercker.com/project/bykey/384e7713a3dcd6811bf0a296d975ca27)
+
+Simple plugin that integrates with [Rundeck](http://rundeck.org).
 
 The following operations are available:
 
@@ -9,7 +13,7 @@ The following operations are available:
  - Import an entire project archive into a project
 
 Known to work with Cloudify 3.2.1 and - more or less - Rundeck versions API 11+.
-Rundeck calls are really forwarded off to an Antillion fork of rundeckrun.
+Rundeck calls are really forwarded off to an Antillion fork of [(a)rundeckrun](http://github.com/antillion/arundeckrun).
 
 # Installation
 

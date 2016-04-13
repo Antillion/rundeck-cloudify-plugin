@@ -2,7 +2,6 @@ plugins:
   antillion:
     executor: central_deployment_agent
     source: cloudify-rundeck-plugin
-    install_arguments: --process-dependency-links
 
 node_types:
   antillion.rundeck.config:

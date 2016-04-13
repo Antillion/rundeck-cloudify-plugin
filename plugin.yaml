@@ -2,15 +2,24 @@ plugins:
   antillion:
     executor: central_deployment_agent
     source: https://github.com/Antillion/rundeck-cloudify-plugin/archive/master.zip
-    install_arguments: --process-dependency-links
 
 node_types:
   antillion.rundeck.config:
     derived_from: cloudify.nodes.Root
+    properties:
+      hostname:
+        default: ''
+      port:
+        default: 440
+      protocol:
+        default: http
+      api_token:
+        default: ''  
     interfaces:
       fake.lifecycle:
         create:
           implementation: antillion.cfyrundeck.jobs.execute
+
 
 workflows:
   antillion.rundeck.import_job:

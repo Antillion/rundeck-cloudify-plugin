@@ -32,10 +32,7 @@ setup(
     install_requires=[
         "cloudify-plugins-common==3.2.1",
         "cloudify-dsl-parser==3.2.1",
-        "rundeckrun==0.2.3"
-    ],
-    dependency_links=[
-        "http://github.com/antillion/rundeckrun/tarball/0.2.3-ant#egg=rundeckrun-0.2.3"
+        "arundeckrun==0.2.3"
     ],
     test_requires=[
         "cloudify-dsl-parser==3.2.1"

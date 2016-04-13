@@ -1,8 +1,19 @@
 # rundeck-cloudify-plugin
 
-Simple plugin that allows calling of Rundeck jobs from a Cloudify blueprint
+[![codecov.io](https://codecov.io/github/Antillion/rundeck-cloudify-plugin/coverage.svg?branch=master)](https://codecov.io/github/Antillion/rundeck-cloudify-plugin?branch=master)
 
-Known to work with Cloudify 3.2.1 and - more or less - Rundeck versions API 11+
+[![wercker status](https://app.wercker.com/status/384e7713a3dcd6811bf0a296d975ca27/m "wercker status")](https://app.wercker.com/project/bykey/384e7713a3dcd6811bf0a296d975ca27)
+
+Simple plugin that integrates with [Rundeck](http://rundeck.org).
+
+The following operations are available:
+
+ - Execute (and wait for) a job
+ - Import a single job XMl/YAML into a project
+ - Import an entire project archive into a project
+
+Known to work with Cloudify 3.2.1 and - more or less - Rundeck versions API 11+.
+Rundeck calls are really forwarded off to an Antillion fork of [(a)rundeckrun](http://github.com/antillion/arundeckrun).
 
 # Installation
 
@@ -116,11 +127,23 @@ See above operation for parameters details.
 
 ### Example
 
+Local (bootstrap) execution:
+
     cfy local execute -w antillion.rundeck.import_job \
                       -p '{"file_url": "http://some.host/rundeck_job_file.yaml", \
                            "project": "my_project", "format": "yaml", \
                            "rundeck": {"hostname": "my.rundeck", \
                                        "api_token": "mega-long-api-token"}}'
+
+Or, of course:
+
+    cfy executions start -w antillion.rundeck.import_job \
+                         -d YOUR_DEPLOYMENT_ID\
+                         -p '{"file_url": "http://some.host/rundeck_job_file.yaml", \
+                              "project": "my_project", "format": "yaml", \
+                              "rundeck": {"hostname": "my.rundeck", \
+                                          "api_token": "mega-long-api-token"}}'
+
 
 ## antillion.cfyrundeck.projects.import_archive (operation)
 
@@ -140,11 +163,22 @@ See above operation for parameters details.
 
  ### Example
 
+Local execution:
+
      cfy local execute -w antillion.rundeck.import_project_archive \
                        -p '{"archive_url": "http://some.host/my_project.jar", \
                             "project": "my_project", \
                             "rundeck": {"hostname": "my.rundeck", \
                                         "api_token": "mega-long-api-token"}}'
+
+Standard execution:
+
+    cfy executions start -w antillion.rundeck.import_project_archive \
+                         -d YOUR_DEPLOYMENT_ID\
+                         -p '{"archive_url": "http://some.host/my_project.jar", \
+                              "project": "my_project", \
+                              "rundeck": {"hostname": "my.rundeck", \
+                                          "api_token": "mega-long-api-token"}}'
 
 
 # Development

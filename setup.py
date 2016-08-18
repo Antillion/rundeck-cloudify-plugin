@@ -35,7 +35,7 @@ setup(
         "arundeckrun==0.2.3"
     ],
     test_requires=[
-        "cloudify-dsl-parser==3.2.1"
+        "cloudify-dsl-parser==3.2.1",
         "nose"
     ]
 )

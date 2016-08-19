@@ -31,7 +31,7 @@ plugin unless a direct type reference is made from the blueprint.
 
 A simple full example might be:
 
-    tosca_definitions_version: cloudify_dsl_1_1
+    tosca_definitions_version: cloudify_dsl_1_3
 
     imports:
      - https://raw.githubusercontent.com/Antillion/rundeck-cloudify-plugin/master/plugin.yaml

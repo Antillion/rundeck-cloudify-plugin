@@ -14,7 +14,7 @@
 #    * limitations under the License.
 
 # ctx is imported and used in operations
-from cloudify import ctx
+from cloudify.workflows import ctx
 
 # put the operation decorator on any function that is a task
 from cloudify.decorators import operation, workflow
@@ -26,6 +26,7 @@ from requests import get, codes
 
 @operation
 def import_archive(project, archive_url, preserve_uuid, import_executions, import_config, import_acls, **kwargs):
+
   ctx.logger.info('[{1}] - Importing project archive from {0}'.format(archive_url, project))
 
   ctx.logger.debug('[{0}] Retrieving project archive from {1}'.format(project, archive_url))

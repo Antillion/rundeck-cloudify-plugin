@@ -12,7 +12,7 @@ The following operations are available:
  - Import a single job XMl/YAML into a project
  - Import an entire project archive into a project
 
-Known to work with Cloudify 3.2.1 and - more or less - Rundeck versions API 11+.
+Known to work with Cloudify 3.4 and - more or less - Rundeck versions API 11+.
 Rundeck calls are really forwarded off to an Antillion fork of [(a)rundeckrun](http://github.com/antillion/arundeckrun).
 
 # Installation
@@ -31,7 +31,7 @@ plugin unless a direct type reference is made from the blueprint.
 
 A simple full example might be:
 
-    tosca_definitions_version: cloudify_dsl_1_1
+    tosca_definitions_version: cloudify_dsl_1_3
 
     imports:
      - https://raw.githubusercontent.com/Antillion/rundeck-cloudify-plugin/master/plugin.yaml

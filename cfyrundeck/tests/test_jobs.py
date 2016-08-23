@@ -25,11 +25,14 @@ from mock import patch
 from cloudify.workflows import local
 from cloudify.exceptions import NonRecoverableError
 
+from cloudify.state import current_ctx
+from cloudify.mocks import MockCloudifyContext
+
+from rundeck.client import Rundeck
+
 sys.path.append(os.getcwd() + '/cfyrundeck')
 
-import cfyrundeck.jobs as jobs
-import cfyrundeck.projects as projects
-from rundeck.client import Rundeck
+from . import PluginTestBase
 
 #
 # Enable mocking of importlib.import_module so we can intercept calls to
@@ -53,12 +56,7 @@ def get_blueprint_path():
   return os.getcwd() + '/cfyrundeck/tests/blueprint'
 
 
-class TestRundeckPlugin(unittest.TestCase):
-  def setup_get_mock(self, GetMock, response_status, response_data):
-    GetMock.return_value = MagicMock()
-    GetMock.return_value.__str__.return_value = response_data
-    type(GetMock.return_value).status_code = PropertyMock(return_value=response_status)
-    type(GetMock.return_value).text = PropertyMock(return_value=response_data)
+class TestJobsOperation(PluginTestBase):
 
   def build_import_params(self, job_filename):
     file_url = 'http://localhost:54321/blueprint/{0}'.format(job_filename)
@@ -69,6 +67,9 @@ class TestRundeckPlugin(unittest.TestCase):
     }
 
   def test_import_with_missing_file(self):
+    ctx = self.get_mock_context('test_import_with_missing_file')
+    current_ctx.set(ctx=ctx)
+
     job_filename = 'import_job_simple.xml'
     with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
       job_data = '<some><job><data></data></job></some>'
@@ -86,6 +87,8 @@ class TestRundeckPlugin(unittest.TestCase):
       instance.import_job.assert_not_called()
 
   def test_import(self):
+    ctx = self.get_mock_context('test_import')
+    current_ctx.set(ctx=ctx)
     job_filename = 'import_job_simple.xml'
     with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
       job_data = '<some><job><data></data></job></some>'
@@ -135,11 +138,3 @@ class TestRundeckPlugin(unittest.TestCase):
         self.env.execute('install', task_retries=0)
 
       self.assertEquals(expected_exception_msg, str(cm.exception))
-
-  def setUp(self):
-    blueprint_path = os.path.join(os.path.dirname(__file__),
-                                  'blueprint', 'test_rundeck.yaml')
-    inputs = {}
-    self.env = local.init_env(blueprint_path,
-                              name=self._testMethodName,
-                              inputs=inputs)

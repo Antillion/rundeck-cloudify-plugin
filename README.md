@@ -12,7 +12,7 @@ The following operations are available:
  - Import a single job XMl/YAML into a project
  - Import an entire project archive into a project
 
-Known to work with Cloudify 3.2.1 and - more or less - Rundeck versions API 11+.
+Known to work with Cloudify 3.4 and - more or less - Rundeck versions API 11+.
 Rundeck calls are really forwarded off to an Antillion fork of [(a)rundeckrun](http://github.com/antillion/arundeckrun).
 
 # Installation

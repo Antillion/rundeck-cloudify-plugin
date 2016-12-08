@@ -20,7 +20,7 @@ from setuptools import setup
 setup(
     name='cloudify-rundeck-plugin',
 
-    version='0.2.1',
+    version='0.1.2',
     author='Oliver Tupman',
     author_email='otupman@antillion.com',
     description='Rundeck Plugin for Cloudify',
@@ -30,12 +30,12 @@ setup(
     license='LICENSE',
     zip_safe=False,
     install_requires=[
-        "cloudify-plugins-common>=3.4.0",
-        "cloudify-dsl-parser>=3.4.0",
+        "cloudify-plugins-common==3.4.0",
+        "cloudify-dsl-parser==3.4.0",
         "arundeckrun==0.2.3"
     ],
     test_requires=[
-        "cloudify-dsl-parser>=3.4.0",
+        "cloudify-dsl-parser==3.4.0",
         "nose"
     ]
 )

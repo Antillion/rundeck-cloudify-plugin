@@ -25,6 +25,9 @@ def create_rundeck_client(rundeck_config):
   :rtype: rundeck.client.Rundeck
   :return: the correctly-build Rundeck client
   """
+  assert rundeck_config.get('hostname') is not None, 'Hostname must be present'
+  assert rundeck_config.get('api_token') is not None, 'API token must be present'
+
   return Rundeck(rundeck_config['hostname'],
                  api_token=rundeck_config['api_token'],
                  protocol=rundeck_config['protocol'] if rundeck_config.has_key('protocol') else 'http',

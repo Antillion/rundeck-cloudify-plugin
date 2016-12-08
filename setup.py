@@ -30,12 +30,12 @@ setup(
     license='LICENSE',
     zip_safe=False,
     install_requires=[
-        "cloudify-plugins-common==3.2.1",
-        "cloudify-dsl-parser==3.2.1",
+        "cloudify-plugins-common==3.4.0",
+        "cloudify-dsl-parser==3.4.0",
         "arundeckrun==0.2.3"
     ],
     test_requires=[
-        "cloudify-dsl-parser==3.2.1",
+        "cloudify-dsl-parser==3.4.0",
         "nose"
     ]
 )

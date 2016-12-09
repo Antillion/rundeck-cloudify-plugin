@@ -18,17 +18,29 @@ node_types:
     derived_from: cloudify.nodes.Root
     properties:
       install_agent: {default: false}
-      hostname:      {type: string}
-      api_token:     {type: string}
-      port:          {type: string}
-      protocol:      {type: string}
+      hostname:
+        description: The hostname or IP address of the Rundeck server
+        type: string
+      api_token:
+        description: API token that should be used to make requests.
+        type: string
+      port:
+        default: 4440
+        type: string
+      protocol:
+        default: http
+        type: string
     interfaces:
       cloudify.interfaces.validation:
         creation:
-          implementation: antillion.cfyrundeck.jobs.validate_config_node
+          implementation: antillion.cfyrundeck.validators.validate_config_node
+          inputs: { raise_on_failure: { default: false } }
 
 
   antillion.cfyrundeck.SimpleRundeckNode:
+  # A simple node that simplifies calling Rundeck. It pre-assumes that a node called `rundeck_config`
+  # exists within the blueprint and that the node matches the properties of
+  # `antillion.cfyrundeck.RundeckConfigNode` (or, at least, the DSL type `rundeck_configuration`)
     derived_from: cloudify.nodes.SoftwareComponent
     properties:
       install_agent: {default: false}
@@ -37,19 +49,33 @@ node_types:
     interfaces:
       cloudify.interfaces.validation:
         creation:
-          implementation: antillion.cfyrundeck.jobs.validate_job
+          implementation: antillion.cfyrundeck.validators.validate_job
           inputs:
-            job_id: { default: {get_property: [SELF, job_id]} }
+            job_id:
+              default: {get_property: [SELF, job_id]}
+              description: Rundeck ID of the job to check exists
+            raise_on_failure:
+              default: false
+              description: |
+                Whether or not to raise an exception on validation failure. Default is false, in which
+                case the error is logged to the validation event log and should be checked post
+                validation.
+                Setting to true will result in the validation process failing immediately on the first
+                error rather than checking everything in one go.
+
       cloudify.interfaces.lifecycle:
         create:
           implementation: antillion.cfyrundeck.jobs.execute_v2
           inputs:
-            rundeck_config: { default: {get_property: [SELF, rundeck_config]} }
+            rundeck_config:
+              default: {get_property: [SELF, rundeck_config]}
+              description: Rundeck configuration. Must be type rundeck_configuration. Types only work on properties.
             job_id:
-              type: string
+              default: {get_property: [SELF, job_id]}
+              description: Rundeck ID of the job to execute.
             args:
               default: {}
-              description: ''
+              description: Dictionary of name/value arguments to send to Rundeck
 
 workflows:
   antillion.rundeck.import_job:
@@ -75,14 +101,10 @@ workflows:
         description: The name of the project that will have the archive imported into
       archive_url:
         description: URL to the project archive
-      preserve_uuid:
-        default: true
-      import_executions:
-        default: false
-      import_config:
-        default: false
-      import_acls:
-        default: false
+      preserve_uuid:     { default: true  }
+      import_executions: { default: false }
+      import_config:     { default: false }
+      import_acls:       { default: false }
       rundeck:
         default: {}
         description: dictionary with hostname and api_token

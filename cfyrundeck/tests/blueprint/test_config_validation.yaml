@@ -1,0 +1,21 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - test_plugin.yaml
+
+inputs:
+  hostname:  { type: string }
+  api_token: { type: string }
+
+node_templates:
+  compute_node:
+    type: antillion.cfyrundeck.RundeckConfigNode
+    properties:
+      hostname:  { get_input: hostname }
+      api_token: { get_input: api_token }
+    interfaces:
+      cloudify.interfaces.validation:
+        creation:
+          inputs:
+            raise_on_failure: true

@@ -49,6 +49,30 @@ def execute(**kwargs):
         raise NonRecoverableError("Execution [{0}] did not succeed, result was: {1}".format(execution_id, status))
 
 @operation
+def execute_v2(**kwargs):
+    assert kwargs.get('rundeck_config') is not None, 'Node must have property rundeck_config'
+    rundeck = utils.create_rundeck_client(kwargs['rundeck_config'])
+
+    job_id = kwargs['job_id']
+    poll_in_s = kwargs['poll_in_s'] if kwargs.has_key('poll_in_s') else 10
+
+    ctx.logger.info("Rundeck[{0}]: Starting`...".format(job_id))
+    run_result = rundeck.run_job(job_id, argString=kwargs['args'])
+
+    execution_id = run_result['id']
+    ctx.logger.info("Rundeck[{0}]:Execution[{1}] Started...".format(job_id, execution_id))
+
+    status = 'running'
+    while status == 'running':
+        time.sleep(poll_in_s)
+        execution_status = rundeck.execution(execution_id)
+        ctx.logger.info("Rundeck[{0}]:Execution[{1}] Checked execution, status is: {2}".
+                        format(job_id, execution_id, execution_status['status']))
+        status = execution_status['status']
+
+    ctx.logger.info("Rundeck[{0}]:Execution[{1}] {2} ".format(job_id, execution_id, status))
+    if status != 'succeeded':
+        raise NonRecoverableError("Execution [{0}] did not succeed, result was: {1}".format(execution_id, status))
 def import_job(file_url, project, format, preserve_uuid, **kwargs):
   ctx.logger.info('Importing job from {0} to {1}'.format(file_url, project))
 

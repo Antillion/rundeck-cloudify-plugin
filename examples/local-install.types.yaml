@@ -1,0 +1,8 @@
+imports:
+  - rundeck-cloudify-plugin.types.yaml
+
+plugins:
+  antillion:
+    executor: central_deployment_agent
+    source: ../../ # double ../ because Cfy local expects it in examples/plugins/the-plugin-dir-here
+

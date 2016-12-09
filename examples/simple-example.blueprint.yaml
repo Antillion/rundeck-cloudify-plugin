@@ -1,0 +1,50 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - local-install.types.yaml
+
+inputs:
+  hostname:  { type: string }
+  api_token: { type: string }
+  port:      { type: string, default: 4440 }
+  protocol:  { type: string, default: http }
+
+node_templates:
+  compute_node:
+    type: antillion.cfyrundeck.RundeckConfigNode
+    properties:
+      hostname:  { get_input: hostname }
+      api_token: { get_input: api_token }
+      port:      { get_input: port }
+      protocol:  { get_input: protocol }
+
+  simple_host:
+    type: antillion.cfyrundeck.SimpleRundeckNode
+    relationships:
+      - type: cloudify.relationships.contained_in
+        target: compute_node
+    properties:
+      job_id: 6777d2cc-ecca-4a8b-8df9-53d304a24eccNOPE
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        create:
+          inputs:
+            ## Overrides
+            # Uncommenting the following would override the default defined in SimpleNode
+            #rundeck_server: some.other.rundeck.com
+            #api_token: 'SOME_OTHER_TOKEN'
+            job_id: {get_property: [SELF, job_id]}
+            poll_in_s: 1
+            args:
+              stringArg: 'stringVal1, stringVal2'
+              numArg: 2
+              arrayArg:
+                - 3
+                - 4
+                - 5
+            ## Not yet implemented
+            # loglevel: 'DEBUG'
+            # asUser: 'SomeUser'
+            # filters:
+            #   hostname: 'Somehostname'

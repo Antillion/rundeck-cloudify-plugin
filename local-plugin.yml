@@ -1,7 +1,18 @@
-plugins:
+`plugins:
   antillion:
     executor: central_deployment_agent
-    source: cloudify-rundeck-plugin
+    source: ../../
+
+data_types:
+  rundeck_configuration:
+    description: |
+      Configuration of the Rundeck host
+    properties:
+      hostname:  { type: string, default: {get_property: [compute_node, hostname]} }
+      api_token: { type: string, default: {get_property: [compute_node, api_token]}}
+      port:      { type: string, default: {get_property: [compute_node, port]} }
+      protocol:  { type: string, default: {get_property: [compute_node, protocol]} }
+
 
 node_types:
   antillion.rundeck.config:

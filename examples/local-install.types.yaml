@@ -1,5 +1,5 @@
 imports:
-  - rundeck-cloudify-plugin.types.yaml
+  - ../rundeck-cloudify-plugin.types.yaml
 
 plugins:
   antillion:

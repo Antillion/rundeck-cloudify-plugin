@@ -14,10 +14,13 @@ build:
         name: Install Cfy
         code: |
           pip install cloudify==3.4.0
+          pip install virtualenv
     - script:
         name: Validate local install blueprint
         code: |
           cd examples
+          virtualenv validation_env
+          source validation_env/bin/activate
           export HOSTNAME=test
           export API_KEY=test
           cfy local init --install-plugins -p simple-example.blueprint.yaml -i "hostname=${HOSTNAME};api_key=${API_KEY}"

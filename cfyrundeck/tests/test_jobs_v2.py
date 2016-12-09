@@ -56,7 +56,7 @@ def get_blueprint_path():
   return os.getcwd() + '/cfyrundeck/tests/blueprint'
 
 
-class TestJobsOperation(PluginTestBase):
+class TestMoreJobsOperations(PluginTestBase):
 
   def setUp(self):
     PluginTestBase.setUp(self, 'test_execute_v2.yaml')

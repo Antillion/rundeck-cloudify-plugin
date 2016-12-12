@@ -19,11 +19,9 @@ build:
         name: Validate local install blueprint
         code: |
           cd examples
-          virtualenv validation_env
-          source validation_env/bin/activate
           export HOSTNAME=test
           export API_KEY=test
-          cfy local init --install-plugins -p simple-example.blueprint.yaml -i "hostname=${HOSTNAME};api_key=${API_KEY}"
+          cfy local install-plugins -p simple-example.blueprint.yaml
           cfy local install -w simple-example.blueprint.yaml -i "hostname=${HOSTNAME};api_key=${API_KEY}"
     - script:
         name: Upload codecov results

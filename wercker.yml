@@ -13,11 +13,13 @@ build:
     - script:
         name: Install Cfy
         code: |
-          pip install cloudify==3.4.0
           pip install virtualenv
+          virtualenv ~/ci-env
+          pip install cloudify==3.4.0
     - script:
         name: Validate local install blueprint
         code: |
+          source ~/ci-env/bin/activate
           cd examples
           export HOSTNAME=test
           export API_KEY=test

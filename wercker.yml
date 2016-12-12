@@ -23,7 +23,7 @@ build:
           export HOSTNAME=test
           export API_KEY=test
           cfy local install-plugins -p simple-example.blueprint.yaml
-          cfy local install -p simple-example.blueprint.yaml -i "hostname=${HOSTNAME};api_key=${API_KEY}"
+          cfy local install -p simple-example.blueprint.yaml -i "hostname=${HOSTNAME};api_token=${API_KEY}"
     - script:
         name: Upload codecov results
         code: codecov --token=$CODECOV

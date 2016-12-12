@@ -18,7 +18,7 @@ del os.link
 from setuptools import setup
 
 setup(
-    name='cloudify-rundeck-plugin',
+    name='rundeck-cloudify-plugin',
 
     version='0.2.1',
     author='Oliver Tupman',
@@ -30,12 +30,12 @@ setup(
     license='LICENSE',
     zip_safe=False,
     install_requires=[
-        "cloudify-plugins-common>=3.4.0",
-        "cloudify-dsl-parser>=3.4.0",
+        "cloudify-plugins-common==3.4.0",
+        "cloudify-dsl-parser==3.4.0",
         "arundeckrun==0.2.3"
     ],
     test_requires=[
-        "cloudify-dsl-parser>=3.4.0",
+        "cloudify-dsl-parser==3.4.0",
         "nose"
     ]
 )

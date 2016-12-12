@@ -1,0 +1,44 @@
+tosca_definitions_version: cloudify_dsl_1_3
+
+imports:
+  - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  - test_plugin.yaml
+
+inputs:
+  hostname:  { type: string }
+  api_token: { type: string }
+  port:      { default: 4440 }
+
+#node_type:
+#  cfyrundeck.tests.FakeRdConfigNode:
+#  # Placeholder type to ensure that config node validations don't kick in.
+#    derived_from: cloudify.nodes.Root
+#    properties:
+#      install_agent: {default: false}
+#      hostname: {type: string}
+#      api_token: {type:string}
+#      port: { default: 4440 }
+#      protocol: { default: http }
+
+node_templates:
+
+  compute_node:
+    type: antillion.cfyrundeck.RundeckConfigNode
+    properties:
+      hostname:  { get_input: hostname  }
+      api_token: { get_input: api_token }
+      port:      { get_input: port      }
+    interfaces:
+      cloudify.interfaces.validation:
+        creation: {}
+
+  simple_host:
+    type: antillion.cfyrundeck.SimpleRundeckNode
+    properties:
+      job_id: this-is-the-test-id
+    interfaces:
+      cloudify.interfaces.validation:
+        creation:
+          inputs:
+            job_id:           {get_property: [SELF, job_id]}
+            raise_on_failure: true

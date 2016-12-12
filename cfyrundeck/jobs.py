@@ -13,20 +13,27 @@
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License.
 
-# ctx is imported and used in operations
-from cloudify import ctx
-
-# put the operation decorator on any function that is a task
-from cloudify.decorators import operation, workflow
-from cloudify.exceptions import NonRecoverableError
-
 import utils
 import time
+
+from cloudify import ctx
+from cloudify.decorators import operation, workflow
+from cloudify.exceptions import NonRecoverableError, RecoverableError
+
 from requests import get, codes
+
 
 @operation
 def execute(**kwargs):
-    rundeck = utils.create_rundeck_client(kwargs)
+    kwargs['rundeck_config'] = kwargs
+    execute_v2(**kwargs)
+
+
+@operation
+def execute_v2(**kwargs):
+    assert kwargs.get('rundeck_config') is not None, 'Node must have property rundeck_config'
+    rundeck = utils.create_rundeck_client(kwargs['rundeck_config'])
+
     job_id = kwargs['job_id']
     poll_in_s = kwargs['poll_in_s'] if kwargs.has_key('poll_in_s') else 10
 
@@ -39,7 +46,7 @@ def execute(**kwargs):
     status = 'running'
     while status == 'running':
         time.sleep(poll_in_s)
-        execution_status = rundeck.execution(execution_id)
+        execution_status = rundeck.execution_status(execution_id)
         ctx.logger.info("Rundeck[{0}]:Execution[{1}] Checked execution, status is: {2}".
                         format(job_id, execution_id, execution_status['status']))
         status = execution_status['status']
@@ -47,6 +54,7 @@ def execute(**kwargs):
     ctx.logger.info("Rundeck[{0}]:Execution[{1}] {2} ".format(job_id, execution_id, status))
     if status != 'succeeded':
         raise NonRecoverableError("Execution [{0}] did not succeed, result was: {1}".format(execution_id, status))
+
 
 @operation
 def import_job(file_url, project, format, preserve_uuid, **kwargs):

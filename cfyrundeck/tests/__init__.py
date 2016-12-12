@@ -35,10 +35,13 @@ class PluginTestBase(TestCase):
         type(GetMock.return_value).content = PropertyMock(
             return_value=response_data)
 
-    def setUp(self):
+    def setUp(self, blueprint_filename='test_rundeck.yaml', inputs={}):
+        self.init_with_blueprint(blueprint_filename, inputs)
+
+    def init_with_blueprint(self, blueprint_filename='test_rundeck.yaml', inputs = {}):
         blueprint_path = os.path.join(os.path.dirname(__file__),
-                                      'blueprint', 'test_rundeck.yaml')
-        inputs = {}
+                                      'blueprint', blueprint_filename)
+
         self.env = local.init_env(blueprint_path,
                                   name=self._testMethodName,
                                   inputs=inputs)

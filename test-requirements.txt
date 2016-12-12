@@ -3,3 +3,4 @@ mock
 httmock
 HTTPretty
 sure
+tox

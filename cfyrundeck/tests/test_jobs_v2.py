@@ -56,7 +56,10 @@ def get_blueprint_path():
   return os.getcwd() + '/cfyrundeck/tests/blueprint'
 
 
-class TestJobsOperation(PluginTestBase):
+class TestMoreJobsOperations(PluginTestBase):
+
+  def setUp(self):
+    PluginTestBase.setUp(self, 'test_execute_v2.yaml')
 
   def build_import_params(self, job_filename):
     file_url = 'http://localhost:54321/blueprint/{0}'.format(job_filename)
@@ -65,48 +68,6 @@ class TestJobsOperation(PluginTestBase):
       'project': 'project', 'format': 'xml',
       'rundeck': {'hostname': 'rundeck.example.com', 'api_token': 'SOME_API_TOKEN'}
     }
-
-  def test_import_with_missing_file(self):
-    ctx = self.get_mock_context('test_import_with_missing_file')
-    current_ctx.set(ctx=ctx)
-
-    job_filename = 'import_job_simple.xml'
-    with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
-      job_data = '<some><job><data></data></job></some>'
-      instance = RundeckMock.return_value
-      instance.jobs_import.return_value = {}
-
-      self.setup_get_mock(GetMock, 400, '')
-
-      import_params = self.build_import_params(job_filename)
-
-      with self.assertRaises(NonRecoverableError) as cm:
-        self.env.execute('antillion.rundeck.import_job', parameters=import_params)
-
-      GetMock.assert_called_once_with(import_params['file_url'])
-      instance.import_job.assert_not_called()
-
-  def test_import(self):
-    ctx = self.get_mock_context('test_import')
-    current_ctx.set(ctx=ctx)
-    job_filename = 'import_job_simple.xml'
-    with patch('cfyrundeck.utils.Rundeck') as RundeckMock, patch('cfyrundeck.jobs.get') as GetMock:
-      job_data = '<some><job><data></data></job></some>'
-      instance = RundeckMock.return_value
-      instance.jobs_import.return_value = {}
-
-      self.setup_get_mock(GetMock, 200, job_data)
-
-      import_params = self.build_import_params(job_filename)
-
-      self.env.execute('antillion.rundeck.import_job', parameters=import_params)
-
-      RundeckMock.assert_called_once_with('rundeck.example.com',
-                                          api_token='SOME_API_TOKEN',
-                                          port=4440,
-                                          protocol='http')
-      GetMock.assert_called_once_with(import_params['file_url'])
-      instance.import_job.assert_called_once_with(job_data, { 'project': 'project', 'format': 'xml'})
 
   def test_simple_call(self):
     with patch('cfyrundeck.utils.Rundeck') as RundeckMock:
@@ -126,15 +87,15 @@ class TestJobsOperation(PluginTestBase):
                                                           'numArg': 2})
 
 
-  def test_execution_failure(self):
-    with patch('cfyrundeck.utils.Rundeck') as RundeckMock:
-      instance = RundeckMock.return_value
-      execution_id = '0987'
-      instance.run_job.return_value = {'id': execution_id}
-      result = 'failed'
-      instance.execution_status.side_effect = [{'status':'running'}, {'status':result}]
-      expected_exception_msg = "Workflow failed: Task failed 'cfyrundeck.jobs.execute' -> Execution [{0}] did not succeed, result was: {1}".format(execution_id, result)
-      with self.assertRaises(RuntimeError) as cm:
-        self.env.execute('install', task_retries=0)
-
-      self.assertEquals(expected_exception_msg, str(cm.exception))
+  # def test_execution_failure(self):
+  #   with patch('cfyrundeck.utils.Rundeck') as RundeckMock:
+  #     instance = RundeckMock.return_value
+  #     execution_id = '0987'
+  #     instance.run_job.return_value = {'id': execution_id}
+  #     result = 'failed'
+  #     instance.execution.side_effect = [{'status':'running'}, {'status':result}]
+  #     expected_exception_msg = "Workflow failed: Task failed 'cfyrundeck.jobs.execute' -> Execution [{0}] did not succeed, result was: {1}".format(execution_id, result)
+  #     with self.assertRaises(RuntimeError) as cm:
+  #       self.env.execute('install', task_retries=0)
+  #
+  #     self.assertEquals(expected_exception_msg, str(cm.exception))

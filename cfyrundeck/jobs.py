@@ -67,7 +67,7 @@ def execute(**kwargs):
     status = 'running'
     while status == 'running':
         time.sleep(poll_in_s)
-        execution_status = rundeck.execution(execution_id)
+        execution_status = rundeck.execution_status(execution_id)
         ctx.logger.info("Rundeck[{0}]:Execution[{1}] Checked execution, status is: {2}".
                         format(job_id, execution_id, execution_status['status']))
         status = execution_status['status']
@@ -93,7 +93,7 @@ def execute_v2(**kwargs):
     status = 'running'
     while status == 'running':
         time.sleep(poll_in_s)
-        execution_status = rundeck.execution(execution_id)
+        execution_status = rundeck.execution_status(execution_id)
         ctx.logger.info("Rundeck[{0}]:Execution[{1}] Checked execution, status is: {2}".
                         format(job_id, execution_id, execution_status['status']))
         status = execution_status['status']

@@ -112,7 +112,7 @@ class TestJobsOperation(PluginTestBase):
     with patch('cfyrundeck.utils.Rundeck') as RundeckMock:
       instance = RundeckMock.return_value
       instance.run_job.return_value = {'id': '0987'}
-      instance.execution.side_effect = [{'status':'running'}, {'status':'succeeded'}]
+      instance.execution_status.side_effect = [{'status':'running'}, {'status':'succeeded'}]
 
       self.env.execute('install', task_retries=0)
       RundeckMock.assert_called_once_with('rundeck.example.com',
@@ -132,7 +132,7 @@ class TestJobsOperation(PluginTestBase):
       execution_id = '0987'
       instance.run_job.return_value = {'id': execution_id}
       result = 'failed'
-      instance.execution.side_effect = [{'status':'running'}, {'status':result}]
+      instance.execution_status.side_effect = [{'status':'running'}, {'status':result}]
       expected_exception_msg = "Workflow failed: Task failed 'cfyrundeck.jobs.execute' -> Execution [{0}] did not succeed, result was: {1}".format(execution_id, result)
       with self.assertRaises(RuntimeError) as cm:
         self.env.execute('install', task_retries=0)

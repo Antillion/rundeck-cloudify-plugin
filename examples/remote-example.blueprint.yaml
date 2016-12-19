@@ -2,6 +2,7 @@ tosca_definitions_version: cloudify_dsl_1_3
 
 imports:
   - http://www.getcloudify.org/spec/cloudify/3.4/types.yaml
+  # TODO(otupman): remove the hard-coded IP address dependency (not sure how, though)
   - http://192.168.0.190:8000/rundeck-cloudify-plugin.types.yaml
 
 plugins:

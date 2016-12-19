@@ -10,6 +10,7 @@ build:
     - script:
         name: Install required libs
         code: |
+            set -e
             apt-get update && apt-get install -y netcat
             pip install tox
             pip install codecov

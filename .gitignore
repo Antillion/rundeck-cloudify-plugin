@@ -8,3 +8,8 @@ lib
 bin
 *.pyc
 .idea
+env
+.cloudify
+examples/.wercker
+examples/local-storage
+rundeck_cloudify_plugin.egg-info
